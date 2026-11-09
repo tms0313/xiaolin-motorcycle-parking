@@ -59,6 +59,7 @@
             </div>
             <div id="calendarDays" class="calendar-days"></div>
             <div id="selectedDateLabel" class="selected-date-label">已選擇今天</div>
+            <div id="calendarRecordInfo" class="calendar-record-info" aria-live="polite"></div>
           </div>
           <input id="recordDate" type="hidden" required>
           <div class="field-label">固定地點</div>
@@ -80,10 +81,6 @@
         </form>
       </section>
 
-      <section class="panel history-panel">
-        <div class="section-heading"><div><h2>停放歷史紀錄</h2><p class="muted">以下列出最近 7 日的停放位置，所有登入者共用。</p></div></div>
-        <div id="recordList" class="record-list"><div class="empty">登入後載入紀錄。</div></div>
-      </section>
     </section>
   </main>
   <div id="pawStamp" class="paw-stamp" aria-hidden="true"><span>🐾</span><strong>確認停放！</strong></div>
