@@ -41,7 +41,20 @@
           <span id="todayLabel" class="date-chip"></span>
         </div>
         <form id="recordForm">
-          <label>停放日期<input id="recordDate" type="date" required></label>
+          <div class="field-label">停放日期</div>
+          <div class="calendar-panel" aria-label="選擇停放日期">
+            <div class="calendar-header">
+              <button id="prevMonth" class="calendar-nav" type="button" aria-label="上個月">‹</button>
+              <div id="calendarMonth" class="calendar-month"></div>
+              <button id="nextMonth" class="calendar-nav" type="button" aria-label="下個月">›</button>
+            </div>
+            <div class="calendar-weekdays">
+              <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+            </div>
+            <div id="calendarDays" class="calendar-days"></div>
+            <div id="selectedDateLabel" class="selected-date-label">已選擇今天</div>
+          </div>
+          <input id="recordDate" type="hidden" required>
           <div class="field-label">固定地點</div>
           <div class="location-grid" id="fixedLocations">
             <button type="button" class="location-choice" data-place="全聯"><span class="paw">🐾</span>全聯</button>
