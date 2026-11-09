@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#d979a5">
+  <meta name="theme-color" content="#4f9b68">
   <title>小霖的摩拖車停放紀錄</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -12,7 +12,7 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand-mark">停</div>
+    <div class="brand-mark" aria-label="貓咪">🐱</div>
     <div><h1>小霖的摩拖車停放紀錄</h1><p>共同停放紀錄</p></div>
     <button id="logoutBtn" class="quiet hidden" type="button">登出</button>
   </header>
@@ -21,8 +21,9 @@
     <section id="configNotice" class="notice hidden"></section>
 
     <section id="authPanel" class="panel auth-panel">
-      <h2>登入紀錄系統</h2>
-      <p class="muted">多人使用同一份停放紀錄，請使用個人帳號登入。</p>
+      <div class="login-cat" aria-hidden="true">🐱</div>
+      <h2>喵～歡迎回來！</h2>
+      <p class="muted login-subtitle">🐾 小霖的摩拖車停放紀錄<br>多人共同使用，請用個人帳號登入</p>
       <form id="authForm">
         <label>Email<input id="email" type="email" autocomplete="email" required placeholder="輸入電子郵件"></label>
         <label>密碼<input id="password" type="password" autocomplete="current-password" required placeholder="輸入密碼"></label>
