@@ -135,10 +135,36 @@
     if (error) return alert("讀取紀錄失敗："+error.message);
     const date = prompt("停放日期（YYYY-MM-DD）",row.parked_at);
     if (date === null) return;
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert("日期格式不正確。");
+    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) return alert("日期格式不正確。");
+    const currentChoice = row.location_type === "custom" ? "G" : row.location_name.replace("地點 ","");
+    const choice = prompt("停放位置：輸入 A、B、C、D，或 G（其他 GPS 位置）",currentChoice);
+    if (choice === null) return;
+    const normalized = choice.trim().toUpperCase();
+    let location_type, location_name, latitude = null, longitude = null;
+    if (["A","B","C","D"].includes(normalized)) {
+      location_type = "fixed";
+      location_name = "地點 " + normalized;
+    } else if (normalized === "G") {
+      location_type = "custom";
+      location_name = "其他位置";
+      const lat = prompt("GPS 緯度",row.latitude == null ? "" : String(row.latitude));
+      if (lat === null) return;
+      const lng = prompt("GPS 經度",row.longitude == null ? "" : String(row.longitude));
+      if (lng === null) return;
+      latitude = Number(lat);
+      longitude = Number(lng);
+      if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90 ||
+          !Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+        return alert("GPS 座標不正確。");
+      }
+    } else {
+      return alert("位置請輸入 A、B、C、D 或 G。");
+    }
     const note = prompt("備註（留空代表清除）",row.note || "");
     if (note === null) return;
-    const {error:updateError} = await db.from("parking_records").update({parked_at:date,note:note.trim() || null}).eq("id",id);
+    const {error:updateError} = await db.from("parking_records").update({
+      parked_at:date,location_type,location_name,latitude,longitude,note:note.trim() || null
+    }).eq("id",id);
     if (updateError) return alert("修改失敗："+updateError.message);
     await loadRecords();
   };
@@ -163,9 +189,6 @@
   $("authForm").addEventListener("submit",async e=>{
     e.preventDefault();
     try { await auth("login"); } catch(err) { setMessage("authMessage",err.message); }
-  });
-  $("signupBtn").addEventListener("click",async()=>{
-    try { await auth("signup"); } catch(err) { setMessage("authMessage",err.message); }
   });
   $("logoutBtn").addEventListener("click",async()=>{
     await db.auth.signOut();
