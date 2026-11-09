@@ -10,6 +10,8 @@
   let user = null;
   let selectedPlace = "";
   let gps = null;
+  let calendarMonth = new Date(new Date().getFullYear(),new Date().getMonth(),1);
+  let selectedDate = localDate();
 
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -21,6 +23,32 @@
     const d = new Date();
     d.setDate(d.getDate() - days);
     return formatLocalDate(d);
+  };
+  const renderCalendar = () => {
+    const year = calendarMonth.getFullYear();
+    const month = calendarMonth.getMonth();
+    const firstWeekday = new Date(year,month,1).getDay();
+    const daysInMonth = new Date(year,month+1,0).getDate();
+    const today = localDate();
+    $("calendarMonth").textContent = year + " 年 " + (month+1) + " 月";
+    let cells = "";
+    for (let i=0;i<firstWeekday;i++) cells += '<span class="calendar-empty" aria-hidden="true"></span>';
+    for (let day=1;day<=daysInMonth;day++) {
+      const date = formatLocalDate(new Date(year,month,day));
+      const classes = ["calendar-day"];
+      if (date === selectedDate) classes.push("selected");
+      if (date === today) classes.push("today");
+      cells += '<button type="button" class="'+classes.join(" ")+'" data-date="'+date+'" aria-pressed="'+(date===selectedDate)+'">'+day+'</button>';
+    }
+    $("calendarDays").innerHTML = cells;
+    $("recordDate").value = selectedDate;
+    $("selectedDateLabel").textContent = "已選擇：" + selectedDate;
+  };
+  const chooseCalendarDate = (date) => {
+    selectedDate = date;
+    const [year,month] = date.split("-").map(Number);
+    calendarMonth = new Date(year,month-1,1);
+    renderCalendar();
   };
   const setMessage = (id, message, ok=false) => {
     $(id).textContent = message || "";
@@ -43,7 +71,7 @@
     $("logoutBtn").classList.toggle("hidden", !user);
     if (user) {
       $("todayLabel").textContent = "今天 " + localDate();
-      $("recordDate").value = localDate();
+      chooseCalendarDate(localDate());
       setSelectedPlace("");
       loadRecords();
     }
@@ -221,6 +249,18 @@
       $("gpsBtn").disabled = false;
       $("gpsBtn").textContent = "◎ 其他位置：取得目前 GPS";
     }
+  });
+  $("prevMonth").addEventListener("click",()=>{
+    calendarMonth = new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()-1,1);
+    renderCalendar();
+  });
+  $("nextMonth").addEventListener("click",()=>{
+    calendarMonth = new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+1,1);
+    renderCalendar();
+  });
+  $("calendarDays").addEventListener("click",e=>{
+    const day = e.target.closest("[data-date]");
+    if (day) chooseCalendarDate(day.dataset.date);
   });
   $("recordForm").addEventListener("submit",saveRecord);
   $("recordList").addEventListener("click",e=>{
