@@ -34,6 +34,7 @@
   let gps = null;
   let calendarMonth = new Date(new Date().getFullYear(),new Date().getMonth(),1);
   let selectedDate;
+  let calendarRecords = [];
 
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -46,6 +47,11 @@
     const d = new Date();
     d.setDate(d.getDate() - days);
     return formatLocalDate(d);
+  };
+  const getLocationIcon = (row) => {
+    if (row.location_type === "custom") return "📍";
+    const icons = {"市場全聯":"🛒","全聯":"🛒","全聯旁邊":"🛒","舊小象旁邊":"🐘","舊小象":"🐘","舊小巷":"🐘","85度C/燒臘店對面":"☕","85度C":"☕","夾娃娃機/洗衣店旁":"🎯","夾娃娃機":"🎯","洗衣店(燒臘店旁)":"🎯","紀醫師前面":"🩺","紀醫師":"🩺"};
+    return icons[row.location_name] || "🐾";
   };
   const renderCalendar = () => {
     const year = calendarMonth.getFullYear();
@@ -61,11 +67,26 @@
       const classes = ["calendar-day"];
       if (date === selectedDate) classes.push("selected");
       if (date === today) classes.push("today");
-      cells += '<button type="button" class="'+classes.join(" ")+'" data-date="'+date+'" aria-pressed="'+(date===selectedDate)+'">'+day+'</button>';
+      const dayRecords = calendarRecords.filter(row => row.parked_at === date);
+      const icons = dayRecords.slice(0,3).map(row => '<span class="calendar-location-icon" title="'+escapeHtml(row.location_name || "停放紀錄")+'">'+getLocationIcon(row)+'</span>').join("");
+      const extra = dayRecords.length > 3 ? '<span class="calendar-more">+'+(dayRecords.length-3)+'</span>' : "";
+      cells += '<button type="button" class="'+classes.join(" ")+'" data-date="'+date+'" aria-pressed="'+(date===selectedDate)+'"><span class="calendar-day-number">'+day+'</span><span class="calendar-day-markers">'+icons+extra+'</span></button>';
     }
     $("calendarDays").innerHTML = cells;
     $("recordDate").value = selectedDate;
+    const selectedRecords = calendarRecords.filter(row => row.parked_at === selectedDate);
     $("selectedDateLabel").textContent = "已選擇：" + selectedDate;
+    const info = $("calendarRecordInfo");
+    if (info) {
+      info.innerHTML = selectedRecords.length
+        ? '<div class="calendar-info-title">當日停放位置</div>' + selectedRecords.map(row => {
+            const mapUrl = getMapUrl(row);
+            return '<div class="calendar-record-row"><span class="calendar-info-icon">'+getLocationIcon(row)+'</span><span class="calendar-info-name">'+escapeHtml(row.location_name || "未標示地點")+'</span>' +
+              (mapUrl ? '<a class="map-link" target="_blank" rel="noopener" href="'+mapUrl+'">地圖</a>' : '') +
+              '<button class="edit-btn" data-edit="'+row.id+'">修改</button><button class="delete-btn" data-delete="'+row.id+'">刪除</button></div>';
+          }).join("")
+        : '<div class="calendar-no-record">這一天尚無停放紀錄</div>';
+    }
   };
   const chooseCalendarDate = (date) => {
     selectedDate = date;
@@ -151,36 +172,26 @@
       ? '<a class="latest-map-link" target="_blank" rel="noopener" href="'+latestMapUrl+'">在地圖上開啟位置 ↗</a>'
       : "";
   };
+  const loadCalendarRecords = async () => {
+    const year = calendarMonth.getFullYear();
+    const month = calendarMonth.getMonth();
+    const firstDate = formatLocalDate(new Date(year,month,1));
+    const lastDate = formatLocalDate(new Date(year,month+1,0));
+    const {data,error} = await db.from("parking_records").select("*")
+      .gte("parked_at",firstDate).lte("parked_at",lastDate)
+      .order("parked_at",{ascending:true}).order("created_at",{ascending:true});
+    if (error) {
+      calendarRecords = [];
+      $("calendarRecordInfo").innerHTML = '<div class="calendar-no-record">月曆紀錄暫時無法讀取</div>';
+      renderCalendar();
+      return;
+    }
+    calendarRecords = data || [];
+    renderCalendar();
+  };
   const loadRecords = async () => {
     loadLatestParking();
-    $("recordList").innerHTML = '<div class="empty">載入中…</div>';
-    const startDate = dateDaysAgo(6);
-    const endDate = localDate();
-    const query = db.from("parking_records").select("*")
-      .gte("parked_at",startDate).lte("parked_at",endDate)
-      .order("parked_at",{ascending:false}).order("created_at",{ascending:false});
-    const {data,error} = await query.limit(200);
-    if (error) {
-      $("recordList").innerHTML = '<div class="empty">讀取失敗：'+escapeHtml(error.message)+'</div>';
-      return;
-    }
-    if (!data.length) {
-      $("recordList").innerHTML = '<div class="empty">這個日期／條件目前沒有停放紀錄。</div>';
-      return;
-    }
-    $("recordList").innerHTML = data.map(row => {
-      const custom = row.location_type === "custom";
-      const mapUrl = getMapUrl(row);
-      const map = mapUrl
-        ? '<a class="map-link" target="_blank" rel="noopener" href="'+mapUrl+'">在地圖查看 ↗</a>' : "";
-      return '<article class="record-card">'+
-        '<div class="record-head"><div><div class="place-name">'+(custom ? "📍 " : "🏠 ")+escapeHtml(row.location_name)+'</div>'+
-        '<div class="record-meta">'+escapeHtml(row.parked_at)+' · '+new Date(row.created_at).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})+'</div></div>'+map+'</div>'+
-        (row.note ? '<p class="record-note">'+escapeHtml(row.note)+'</p>' : '')+
-        '<div class="record-meta">建立者：'+escapeHtml(row.created_by_email || "共同使用者")+'</div>'+
-        '<div class="record-actions"><button class="edit-btn" data-edit="'+row.id+'">修改</button><button class="delete-btn" data-delete="'+row.id+'">刪除</button></div>'+
-        '</article>';
-    }).join("");
+    await loadCalendarRecords();
   };
   const playPawStamp = () => new Promise(resolve => {
     const stamp = $("pawStamp");
@@ -324,18 +335,18 @@
   });
   $("prevMonth").addEventListener("click",()=>{
     calendarMonth = new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()-1,1);
-    renderCalendar();
+    loadCalendarRecords();
   });
   $("nextMonth").addEventListener("click",()=>{
     calendarMonth = new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+1,1);
-    renderCalendar();
+    loadCalendarRecords();
   });
   $("calendarDays").addEventListener("click",e=>{
     const day = e.target.closest("[data-date]");
     if (day) chooseCalendarDate(day.dataset.date);
   });
   $("recordForm").addEventListener("submit",saveRecord);
-  $("recordList").addEventListener("click",e=>{
+  $("calendarRecordInfo").addEventListener("click",e=>{
     const edit = e.target.closest("[data-edit]");
     const del = e.target.closest("[data-delete]");
     if (edit) editRecord(edit.dataset.edit);
