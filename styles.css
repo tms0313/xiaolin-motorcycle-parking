@@ -237,3 +237,49 @@ footer{font-size:13px;color:#78977b}
   .calendar-weekdays,.calendar-days{gap:3px}
   .calendar-day{border-radius:10px;font-size:15px}
 }
+
+
+/* 首頁最近停放位置：參考泡泡卡片的醒目呈現，延續綠色貓咪主題 */
+.latest-parking{
+  position:relative;
+  overflow:hidden;
+  margin-bottom:18px;
+  padding:18px 20px 19px;
+  border:2px solid #4b8e59;
+  border-radius:20px;
+  background:linear-gradient(145deg,#fffef7 0%,#f0fae9 100%);
+  box-shadow:4px 5px 0 #39734a;
+}
+.latest-parking:after{
+  content:"🐾";
+  position:absolute;
+  right:16px;
+  bottom:8px;
+  font-size:48px;
+  opacity:.13;
+  transform:rotate(-18deg);
+  pointer-events:none;
+}
+.latest-kicker{
+  color:#4d8956;
+  font-size:15px;
+  font-weight:850;
+  margin-bottom:7px;
+}
+.latest-date{color:#789477;font-size:14px;margin-bottom:3px}
+.latest-place{
+  color:#2f7041;
+  font-size:27px;
+  line-height:1.25;
+  font-weight:900;
+  overflow-wrap:anywhere;
+  padding-right:24px;
+}
+.latest-map{margin-top:9px;min-height:18px}
+.latest-map-link{
+  color:#326d49;
+  font-size:14px;
+  font-weight:750;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
