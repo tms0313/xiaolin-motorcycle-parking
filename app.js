@@ -85,7 +85,7 @@
     $("gpsStatus").textContent = place ? "已選擇固定地點，不會記錄 GPS。" : "固定地點不會記錄 GPS；只有選擇其他位置時才需要定位。";
     $("gpsCoordinates").classList.add("hidden");
     $("saveBtn").disabled = !place;
-    $("saveBtn").textContent = place ? "儲存停放紀錄" : "請先選擇停放地點";
+    $("saveBtn").textContent = place ? "確認停放地點" : "請先選擇停放地點";
   };
   const showApp = (sessionUser) => {
     user = sessionUser;
@@ -182,6 +182,17 @@
         '</article>';
     }).join("");
   };
+  const playPawStamp = () => new Promise(resolve => {
+    const stamp = $("pawStamp");
+    if (!stamp) return resolve();
+    stamp.classList.remove("play");
+    void stamp.offsetWidth;
+    stamp.classList.add("play");
+    window.setTimeout(() => {
+      stamp.classList.remove("play");
+      resolve();
+    }, 850);
+  });
   const saveRecord = async (event) => {
     event.preventDefault();
     if (!selectedPlace) return;
@@ -201,10 +212,12 @@
       created_by_email:user.email || null
     };
     $("saveBtn").disabled = true;
+    $("saveBtn").textContent = "喵～蓋章確認中…";
+    await playPawStamp();
     $("saveBtn").textContent = "儲存中…";
     const {error} = await db.from("parking_records").insert(payload);
     $("saveBtn").disabled = false;
-    $("saveBtn").textContent = "儲存停放紀錄";
+    $("saveBtn").textContent = "確認停放地點";
     if (error) {
       setMessage("recordMessage","儲存失敗："+error.message);
       return;
@@ -297,7 +310,7 @@
       $("gpsCoordinates").textContent = "緯度 "+gps.lat.toFixed(6)+"，經度 "+gps.lng.toFixed(6);
       $("gpsCoordinates").classList.remove("hidden");
       $("saveBtn").disabled = false;
-      $("saveBtn").textContent = "儲存其他 GPS 位置";
+      $("saveBtn").textContent = "確認停放地點";
       setMessage("recordMessage","");
     } catch(err) {
       gps = null;
