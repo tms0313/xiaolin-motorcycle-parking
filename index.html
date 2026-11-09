@@ -1,89 +1,21 @@
 <!doctype html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#4f9b68">
-  <title>小霖的摩拖車停放紀錄</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
-  <script defer src="app.js"></script>
-</head>
-<body>
-  <header class="topbar">
-    <div class="brand-mark" aria-label="貓咪">🐈</div>
-    <div><h1>小霖的摩拖車停放紀錄</h1><p>共同停放紀錄</p></div>
-    <button id="logoutBtn" class="quiet hidden" type="button">登出</button>
-  </header>
-
-  <main class="wrap">
-    <section id="configNotice" class="notice hidden"></section>
-
-    <section id="authPanel" class="panel auth-panel">
-      <div class="login-cat" aria-hidden="true">🐈</div>
-      <h2>喵～歡迎回來！</h2>
-      <p class="muted login-subtitle">🐾 小霖的摩拖車停放紀錄<br>多人共同使用，請用個人帳號登入</p>
-      <form id="authForm">
-        <label>Email<input id="email" type="email" autocomplete="email" required placeholder="輸入電子郵件"></label>
-        <label>密碼<input id="password" type="password" autocomplete="current-password" required placeholder="輸入密碼"></label>
-        <div class="actions">
-          <button class="primary" type="submit">登入</button>
-        </div>
-      </form>
-      <p id="authMessage" class="message" role="status"></p>
-    </section>
-
-    <section id="appPanel" class="hidden">
-      <section id="latestParkingPanel" class="latest-parking panel" aria-live="polite">
-        <div class="latest-kicker">🐾 最近停放位置</div>
-        <div id="latestParkingDate" class="latest-date">目前尚無停放紀錄</div>
-        <div id="latestParkingPlace" class="latest-place">還沒有紀錄</div>
-        <div id="latestParkingMap" class="latest-map"></div>
-      </section>
-      <section class="panel">
-        <div class="section-heading">
-          <div><h2>新增停放紀錄</h2><p class="muted">選擇固定地點，或新增其他 GPS 位置。</p></div>
-          <span id="todayLabel" class="date-chip"></span>
-        </div>
-        <form id="recordForm">
-          <div class="field-label">停放日期</div>
-          <div class="calendar-panel" aria-label="選擇停放日期">
-            <div class="calendar-header">
-              <button id="prevMonth" class="calendar-nav" type="button" aria-label="上個月">‹</button>
-              <div id="calendarMonth" class="calendar-month"></div>
-              <button id="nextMonth" class="calendar-nav" type="button" aria-label="下個月">›</button>
-            </div>
-            <div class="calendar-weekdays">
-              <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
-            </div>
-            <div id="calendarDays" class="calendar-days"></div>
-            <div id="selectedDateLabel" class="selected-date-label">已選擇今天</div>
-            <div id="calendarRecordInfo" class="calendar-record-info" aria-live="polite"></div>
-          </div>
-          <input id="recordDate" type="hidden" required>
-          <div class="field-label">固定地點</div>
-          <div class="location-grid" id="fixedLocations">
-            <button type="button" class="location-choice" data-place="市場全聯"><span class="paw">🐾</span>市場全聯</button>
-            <button type="button" class="location-choice" data-place="舊小象旁邊"><span class="paw">🐾</span>舊小象旁邊</button>
-            <button type="button" class="location-choice" data-place="85度C/燒臘店對面"><span class="paw">🐾</span>85度C／燒臘店對面</button>
-            <button type="button" class="location-choice" data-place="夾娃娃機/洗衣店旁"><span class="paw">🐾</span>夾娃娃機／洗衣店旁</button>
-            <button type="button" class="location-choice" data-place="紀醫師前面"><span class="paw">🐾</span>紀醫師前面</button>
-          </div>
-          <div class="custom-location">
-            <button id="gpsBtn" type="button" class="gps-button">◎ 其他位置：取得目前 GPS</button>
-            <p id="gpsStatus" class="muted small">固定地點不會記錄 GPS；只有選擇其他位置時才需要定位。</p>
-            <div id="gpsCoordinates" class="coords hidden"></div>
-          </div>
-          <label>備註（選填）<textarea id="note" rows="2" maxlength="500" placeholder="例如：停放位置、交接事項……"></textarea></label>
-          <button id="saveBtn" class="primary full" type="submit" disabled>請先選擇停放地點</button>
-          <p id="recordMessage" class="message" role="status"></p>
-        </form>
-      </section>
-
-    </section>
-  </main>
-  <div id="pawStamp" class="paw-stamp" aria-hidden="true"><span>🐾</span><strong>確認停放！</strong></div>
-  <footer>小霖的摩拖車停放紀錄</footer>
-</body>
-</html>
+<html lang="zh-Hant"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8fd3ff"><title>小霖的摩拖車停放紀錄</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&display=swap"><link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script defer src="app.js"></script>
+</head><body><main class="wrap">
+<header class="page-heading"><h1 class="title">今天車停哪？</h1><button id="logoutBtn" class="logout hidden" type="button">登出</button></header>
+<section id="configNotice" class="notice hidden"></section>
+<section id="authPanel" class="box auth-panel"><div class="login-cat">🐈</div><h2>喵～歡迎回來！</h2><p class="login-subtitle">🐾 小霖的摩拖車停放紀錄<br>多人共同使用，請用個人帳號登入</p>
+<form id="authForm"><label>Email<input id="email" type="email" autocomplete="email" required placeholder="輸入電子郵件"></label><label>密碼<input id="password" type="password" autocomplete="current-password" required placeholder="輸入密碼"></label><button class="primary full" type="submit">登入</button></form><p id="authMessage" class="message" role="status"></p></section>
+<section id="appPanel" class="hidden">
+<section class="box bubble latest-parking" aria-live="polite"><small id="latestParkingDate">還沒有紀錄</small><h2 id="latestParkingPlace">還沒有紀錄</h2><span id="latestParkingMap"></span></section>
+<section class="box calendar-box"><div class="nav"><button class="nb" id="prevMonth" type="button" aria-label="上個月">◀</button><h2 id="calendarMonth"></h2><button class="today" id="toToday" type="button">今天</button><button class="nb" id="nextMonth" type="button" aria-label="下個月">▶</button></div>
+<div class="calendar-weekdays"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div><div id="calendarDays" class="calendar-days"></div><div id="selectedDateLabel" class="selected-date-label">已選擇今天</div><div id="calendarRecordInfo" class="calendar-record-info" aria-live="polite"></div></section>
+<section class="box editor-box"><h2 class="dayhead">記下停車位置</h2><form id="recordForm"><input id="recordDate" type="hidden" required><p class="ask">這天停在？</p>
+<div class="chips location-grid" id="fixedLocations">
+<button type="button" class="chip location-choice" data-place="市場全聯">🛒 市場全聯</button><button type="button" class="chip location-choice" data-place="舊小象旁邊">🐘 舊小象旁邊</button><button type="button" class="chip location-choice" data-place="85度C/燒臘店對面">☕ 85度C／燒臘店對面</button><button type="button" class="chip location-choice" data-place="夾娃娃機/洗衣店旁">🎯 夾娃娃機／洗衣店旁</button><button type="button" class="chip location-choice" data-place="紀醫師前面">🩺 紀醫師前面</button></div>
+<label>備註（選填）<textarea id="note" rows="2" maxlength="500" placeholder="例如：停在柱子旁邊……"></textarea></label>
+<div class="bar"><div class="gps-area"><button id="gpsBtn" type="button" class="gps-button">📍 加上定位</button><p id="gpsStatus" class="gps-status">固定地點不會記錄 GPS；其他位置才需要定位。</p><div id="gpsCoordinates" class="coords hidden"></div></div><button id="saveBtn" class="paw-button" type="submit" disabled><span aria-hidden="true">🐾</span><b>請先選擇停放地點</b></button></div><p id="recordMessage" class="message" role="status"></p></form></section>
+</section></main><div id="pawStamp" class="paw-stamp" aria-hidden="true"><span>🐾</span><strong>確認停放！</strong></div><footer>小霖的摩拖車停放紀錄 · 喵～</footer></body></html>
