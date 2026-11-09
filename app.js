@@ -11,7 +11,7 @@
   let selectedPlace = "";
   let gps = null;
   let calendarMonth = new Date(new Date().getFullYear(),new Date().getMonth(),1);
-  let selectedDate = localDate();
+  let selectedDate;
 
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -19,6 +19,7 @@
   const formatLocalDate = (d) =>
     [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");
   const localDate = () => formatLocalDate(new Date());
+  selectedDate = localDate();
   const dateDaysAgo = (days) => {
     const d = new Date();
     d.setDate(d.getDate() - days);
