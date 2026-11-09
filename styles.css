@@ -33,3 +33,119 @@ input:focus,select:focus,textarea:focus{outline:2px solid #e9b5d0;border-color:#
 footer{color:#b69eaf}
 @media(prefers-reduced-motion:no-preference){.location-choice{transition:all .16s ease}.location-choice:active{transform:scale(.98)}}
 .location-choice .paw{font-size:20px;line-height:1;filter:saturate(.9)}
+
+
+/* 綠色貓咪可愛風格：全站字級放大一級 */
+:root{
+  color:#294c37;
+  background:#edf8ee;
+  color-scheme:light;
+  font-size:17px;
+}
+body{
+  background:linear-gradient(180deg,#dff2df 0%,#edf8ed 48%,#f7fbef 100%);
+  color:#294c37;
+}
+.topbar{
+  background:linear-gradient(115deg,#397d50 0%,#62a96f 58%,#8bc58b 100%);
+  box-shadow:0 4px 16px #315f3a24;
+}
+.brand-mark{
+  width:50px;height:50px;border-radius:18px;
+  background:#f4fff0;color:#397d50;font-size:29px;
+  box-shadow:inset 0 0 0 2px #ffffffa8;
+}
+.topbar h1{font-size:19px}
+.topbar p{font-size:14px}
+.wrap{margin-top:24px}
+.panel{
+  background:#fffefa;
+  border:1px solid #d6ead5;
+  box-shadow:0 7px 22px #47784b14;
+  border-radius:22px;
+}
+h2{font-size:21px;color:#39734a}
+.muted{font-size:15px;color:#718b73}
+.small{font-size:14px}
+.date-chip{font-size:14px;background:#e2f3df;color:#39734b}
+label,.field-label{font-size:15px;color:#426b4a}
+input,select,textarea{font-size:17px;border-color:#cfe3ce;background:#fff}
+.location-choice{
+  min-height:76px;
+  background:linear-gradient(145deg,#fbfff8,#eff8eb);
+  border:1px solid #cfe4ca;
+  color:#3d6947;
+  font-size:18px;
+  border-radius:18px;
+  box-shadow:0 3px 9px #52865a14;
+}
+.location-choice.selected{
+  border:2px solid #58a66b;
+  background:linear-gradient(145deg,#e1f6df,#f1f9e9);
+  color:#28683c;
+  box-shadow:0 4px 13px #5d9d632b;
+}
+.location-choice .paw{font-size:29px;line-height:1}
+.custom-location{
+  border:1px dashed #9dc69e;
+  background:#f5fbf1;
+}
+.gps-button{background:#e4f1ff;color:#32628c;font-size:17px}
+.primary{
+  background:linear-gradient(110deg,#438e58,#72b879);
+  border-radius:14px;
+  box-shadow:0 4px 10px #477d4b2b;
+  font-size:17px;
+}
+.secondary,.quiet,.edit-btn,.delete-btn{font-size:16px}
+.record-card{background:#fffefa;border-color:#dcebd9;border-radius:17px}
+.place-name{font-size:18px;color:#39734a}
+.record-meta{font-size:14px;color:#7b927d}
+.record-note{font-size:16px}
+.edit-btn{background:#e8f2ff;color:#315d8c}
+.delete-btn{background:#fff0eb;color:#a34e3b}
+.map-link{font-size:14px;color:#36734c}
+.empty{font-size:16px;color:#809681}
+.notice{font-size:15px}
+.message{font-size:15px}
+footer{font-size:13px;color:#78977b}
+
+/* 登入卡片：貓咪迎賓風格 */
+.auth-panel{
+  position:relative;
+  overflow:hidden;
+  margin-top:34px;
+  padding:28px 23px 25px;
+  border:2px solid #cfe8c9;
+  background:linear-gradient(155deg,#fffefa 0%,#f4fbef 100%);
+  box-shadow:0 10px 28px #477d4b1c;
+}
+.auth-panel:before,.auth-panel:after{
+  content:"🐾";
+  position:absolute;
+  color:#a4cda0;
+  opacity:.24;
+  font-size:48px;
+  pointer-events:none;
+}
+.auth-panel:before{top:12px;right:16px;transform:rotate(-18deg)}
+.auth-panel:after{bottom:10px;left:12px;transform:rotate(20deg)}
+.login-cat{
+  width:88px;height:88px;
+  margin:0 auto 14px;
+  display:grid;place-items:center;
+  border-radius:30px;
+  background:linear-gradient(145deg,#e2f5dc,#f5f9df);
+  border:2px solid #c8e4c2;
+  font-size:54px;
+  box-shadow:0 5px 14px #5b98521c;
+}
+.auth-panel h2{text-align:center;font-size:24px;margin-bottom:8px}
+.login-subtitle{text-align:center;line-height:1.8;margin-bottom:18px}
+.auth-panel form{position:relative;z-index:1}
+.auth-panel .primary{min-height:52px;font-size:18px}
+.auth-panel input{background:#fff;border-color:#cfe4ca}
+.auth-panel .message{position:relative;z-index:1}
+@media(min-width:600px){
+  .auth-panel{padding:32px}
+}
