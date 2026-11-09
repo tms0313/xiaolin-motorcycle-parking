@@ -5,7 +5,7 @@
     !config.SUPABASE_URL.includes("請填入") &&
     !config.SUPABASE_ANON_KEY.includes("請填入");
   const $ = (id) => document.getElementById(id);
-  const fixedPlaces = ["地點 A", "地點 B", "地點 C", "地點 D"];
+  const fixedPlaces = ["全聯", "紀醫師", "舊小象", "85度C"];
   let db = null;
   let user = null;
   let selectedPlace = "";
@@ -136,14 +136,15 @@
     const date = prompt("停放日期（YYYY-MM-DD）",row.parked_at);
     if (date === null) return;
     if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) return alert("日期格式不正確。");
-    const currentChoice = row.location_type === "custom" ? "G" : row.location_name.replace("地點 ","");
-    const choice = prompt("停放位置：輸入 A、B、C、D，或 G（其他 GPS 位置）",currentChoice);
+    const placeCodes = {"全聯":"A","紀醫師":"B","舊小象":"C","85度C":"D"};
+    const currentChoice = row.location_type === "custom" ? "G" : (placeCodes[row.location_name] || "A");
+    const choice = prompt("停放位置：輸入 A=全聯、B=紀醫師、C=舊小象、D=85度C，或 G（其他 GPS 位置）",currentChoice);
     if (choice === null) return;
     const normalized = choice.trim().toUpperCase();
     let location_type, location_name, latitude = null, longitude = null;
     if (["A","B","C","D"].includes(normalized)) {
       location_type = "fixed";
-      location_name = "地點 " + normalized;
+      location_name = {"A":"全聯","B":"紀醫師","C":"舊小象","D":"85度C"}[normalized];
     } else if (normalized === "G") {
       location_type = "custom";
       location_name = "其他位置";
