@@ -337,7 +337,11 @@
     calendarMonth = new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()-1,1);
     loadCalendarRecords();
   });
-  $("toToday").addEventListener("click",()=>{\n    chooseCalendarDate(localDate());\n    loadCalendarRecords();\n  });\n  $("nextMonth").addEventListener("click",()=>{
+  $("toToday").addEventListener("click",()=>{
+    chooseCalendarDate(localDate());
+    loadCalendarRecords();
+  });
+  $("nextMonth").addEventListener("click",()=>{
     calendarMonth = new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+1,1);
     loadCalendarRecords();
   });
