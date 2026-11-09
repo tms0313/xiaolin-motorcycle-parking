@@ -100,7 +100,36 @@
       showApp(result.data.user);
     }
   };
+  const loadLatestParking = async () => {
+    const {data,error} = await db.from("parking_records").select("*")
+      .order("parked_at",{ascending:false})
+      .order("created_at",{ascending:false})
+      .limit(1);
+    if (error) {
+      $("latestParkingDate").textContent = "最近停放位置暫時無法讀取";
+      $("latestParkingPlace").textContent = "請稍後重新整理";
+      $("latestParkingMap").innerHTML = "";
+      return;
+    }
+    const row = data && data[0];
+    if (!row) {
+      $("latestParkingDate").textContent = "目前尚無停放紀錄";
+      $("latestParkingPlace").textContent = "還沒有紀錄";
+      $("latestParkingMap").innerHTML = "";
+      return;
+    }
+    const dateText = row.parked_at || "";
+    const timeText = row.created_at
+      ? new Date(row.created_at).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})
+      : "";
+    $("latestParkingDate").textContent = dateText + (timeText ? " · " + timeText : "");
+    $("latestParkingPlace").textContent = row.location_name || "未標示地點";
+    $("latestParkingMap").innerHTML = row.location_type === "custom" && row.latitude != null && row.longitude != null
+      ? '<a class="latest-map-link" target="_blank" rel="noopener" href="https://www.google.com/maps?q='+encodeURIComponent(row.latitude+","+row.longitude)+'">在地圖上開啟位置 ↗</a>'
+      : "";
+  };
   const loadRecords = async () => {
+    loadLatestParking();
     $("recordList").innerHTML = '<div class="empty">載入中…</div>';
     const startDate = dateDaysAgo(6);
     const endDate = localDate();
