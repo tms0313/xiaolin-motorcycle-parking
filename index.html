@@ -9,7 +9,7 @@
 <section id="configNotice" class="notice hidden"></section>
 <section id="authPanel" class="box auth-panel"><div class="login-cat">🐈</div><h2>喵～歡迎回來！</h2><p class="login-subtitle">🐾 小霖的摩拖車停放紀錄<br>多人共同使用，請用個人帳號登入</p>
 <form id="authForm"><label>Email<input id="email" type="email" autocomplete="email" required placeholder="輸入電子郵件"></label><label>密碼<input id="password" type="password" autocomplete="current-password" required placeholder="輸入密碼"></label><button class="primary full" type="submit">登入</button></form><p id="authMessage" class="message" role="status"></p></section>
-<section id="appPanel" class="hidden">
+<section id="appPanel" class="hidden"><span id="todayLabel" class="hidden"></span>
 <section class="box bubble latest-parking" aria-live="polite"><small id="latestParkingDate">還沒有紀錄</small><h2 id="latestParkingPlace">還沒有紀錄</h2><span id="latestParkingMap"></span></section>
 <section class="box calendar-box"><div class="nav"><button class="nb" id="prevMonth" type="button" aria-label="上個月">◀</button><h2 id="calendarMonth"></h2><button class="today" id="toToday" type="button">今天</button><button class="nb" id="nextMonth" type="button" aria-label="下個月">▶</button></div>
 <div class="calendar-weekdays"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div><div id="calendarDays" class="calendar-days"></div><div id="selectedDateLabel" class="selected-date-label">已選擇今天</div><div id="calendarRecordInfo" class="calendar-record-info" aria-live="polite"></div></section>
