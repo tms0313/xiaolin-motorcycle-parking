@@ -83,7 +83,7 @@
             const mapUrl = getMapUrl(row);
             return '<div class="calendar-record-row"><span class="calendar-info-icon">'+getLocationIcon(row)+'</span><span class="calendar-info-name">'+escapeHtml(row.location_name || "未標示地點")+'</span>' +
               (mapUrl ? '<a class="map-link" target="_blank" rel="noopener" href="'+mapUrl+'">地圖</a>' : '') +
-              '<button class="edit-btn" data-edit="'+row.id+'">修改</button><button class="delete-btn" data-delete="'+row.id+'">刪除</button></div>';
+              '<button type="button" class="edit-btn" data-edit="'+row.id+'">修改</button><button type="button" class="delete-btn" data-delete="'+row.id+'">刪除</button></div>';
           }).join("")
         : '<div class="calendar-no-record">這一天尚無停放紀錄</div>';
     }
@@ -106,7 +106,7 @@
     $("gpsStatus").textContent = place ? "已選擇固定地點，不會記錄 GPS。" : "固定地點不會記錄 GPS；只有選擇其他位置時才需要定位。";
     $("gpsCoordinates").classList.add("hidden");
     $("saveBtn").disabled = !place;
-    $("saveBtn").textContent = place ? "確認停放地點" : "請先選擇停放地點";
+    $("saveBtn").querySelector("b").textContent = place ? "確認停放地點" : "請先選擇停放地點";
   };
   const showApp = (sessionUser) => {
     user = sessionUser;
@@ -223,12 +223,12 @@
       created_by_email:user.email || null
     };
     $("saveBtn").disabled = true;
-    $("saveBtn").textContent = "喵～蓋章確認中…";
+    $("saveBtn").querySelector("b").textContent = "喵～蓋章確認中…";
     await playPawStamp();
-    $("saveBtn").textContent = "儲存中…";
+    $("saveBtn").querySelector("b").textContent = "儲存中…";
     const {error} = await db.from("parking_records").insert(payload);
     $("saveBtn").disabled = false;
-    $("saveBtn").textContent = "確認停放地點";
+    $("saveBtn").querySelector("b").textContent = "確認停放地點";
     if (error) {
       setMessage("recordMessage","儲存失敗："+error.message);
       return;
@@ -321,7 +321,7 @@
       $("gpsCoordinates").textContent = "緯度 "+gps.lat.toFixed(6)+"，經度 "+gps.lng.toFixed(6);
       $("gpsCoordinates").classList.remove("hidden");
       $("saveBtn").disabled = false;
-      $("saveBtn").textContent = "確認停放地點";
+      $("saveBtn").querySelector("b").textContent = "確認停放地點";
       setMessage("recordMessage","");
     } catch(err) {
       gps = null;
@@ -337,7 +337,7 @@
     calendarMonth = new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()-1,1);
     loadCalendarRecords();
   });
-  $("nextMonth").addEventListener("click",()=>{
+  $("toToday").addEventListener("click",()=>{\n    chooseCalendarDate(localDate());\n    loadCalendarRecords();\n  });\n  $("nextMonth").addEventListener("click",()=>{
     calendarMonth = new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+1,1);
     loadCalendarRecords();
   });
