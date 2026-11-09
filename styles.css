@@ -345,3 +345,20 @@ footer{font-size:13px;color:#78977b}
 @media(prefers-reduced-motion:reduce){
   .paw-stamp.play,.paw-stamp.play span,.paw-stamp.play strong{animation-duration:.01ms}
 }
+
+
+/* 月曆每日停放位置小圖示 */
+.calendar-day{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;padding:5px 1px 3px;aspect-ratio:1 / 1.16}
+.calendar-day-number{display:block;line-height:1.2}
+.calendar-day-markers{display:flex;align-items:center;justify-content:center;gap:1px;min-height:17px;max-width:100%;overflow:hidden}
+.calendar-location-icon{font-size:12px;line-height:1}
+.calendar-more{font-size:9px;font-weight:800;color:#39734a}
+.calendar-day.selected .calendar-more{color:#fff}
+.calendar-record-info{margin-top:10px;padding:10px 11px;border-radius:13px;background:#f5faef;border:1px solid #dcebd7}
+.calendar-info-title{font-size:13px;font-weight:850;color:#39734a;margin-bottom:7px}
+.calendar-record-row{display:flex;align-items:center;gap:7px;padding:6px 0;border-top:1px solid #e2eddf;min-width:0}
+.calendar-info-icon{font-size:18px;flex:0 0 auto}
+.calendar-info-name{font-size:13px;font-weight:700;color:#426b4a;flex:1;min-width:0;overflow-wrap:anywhere}
+.calendar-record-row .map-link{white-space:nowrap}
+.calendar-record-row .edit-btn,.calendar-record-row .delete-btn{padding:6px 8px;font-size:12px;flex:0 0 auto}
+.calendar-no-record{text-align:center;color:#8aa087;font-size:12px;padding:4px}
