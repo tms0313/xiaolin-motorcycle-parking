@@ -14,9 +14,13 @@
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[c]));
-  const localDate = () => {
+  const formatLocalDate = (d) =>
+    [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");
+  const localDate = () => formatLocalDate(new Date());
+  const dateDaysAgo = (days) => {
     const d = new Date();
-    return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");
+    d.setDate(d.getDate() - days);
+    return formatLocalDate(d);
   };
   const setMessage = (id, message, ok=false) => {
     $(id).textContent = message || "";
@@ -40,7 +44,6 @@
     if (user) {
       $("todayLabel").textContent = "今天 " + localDate();
       $("recordDate").value = localDate();
-      $("filterDate").value = localDate();
       setSelectedPlace("");
       loadRecords();
     }
@@ -70,12 +73,11 @@
   };
   const loadRecords = async () => {
     $("recordList").innerHTML = '<div class="empty">載入中…</div>';
-    let query = db.from("parking_records").select("*").order("parked_at",{ascending:false}).order("created_at",{ascending:false});
-    const date = $("filterDate").value;
-    const place = $("filterPlace").value;
-    if (date) query = query.eq("parked_at",date);
-    if (place === "custom") query = query.eq("location_type","custom");
-    else if (place) query = query.eq("location_name",place);
+    const startDate = dateDaysAgo(6);
+    const endDate = localDate();
+    const query = db.from("parking_records").select("*")
+      .gte("parked_at",startDate).lte("parked_at",endDate)
+      .order("parked_at",{ascending:false}).order("created_at",{ascending:false});
     const {data,error} = await query.limit(200);
     if (error) {
       $("recordList").innerHTML = '<div class="empty">讀取失敗：'+escapeHtml(error.message)+'</div>';
@@ -221,8 +223,6 @@
     }
   });
   $("recordForm").addEventListener("submit",saveRecord);
-  $("filterDate").addEventListener("change",loadRecords);
-  $("filterPlace").addEventListener("change",loadRecords);
   $("recordList").addEventListener("click",e=>{
     const edit = e.target.closest("[data-edit]");
     const del = e.target.closest("[data-delete]");
