@@ -149,3 +149,91 @@ footer{font-size:13px;color:#78977b}
 @media(min-width:600px){
   .auth-panel{padding:32px}
 }
+
+
+/* 月曆式停放日期選擇器 */
+.calendar-panel{
+  margin:8px 0 16px;
+  padding:14px;
+  border:1px solid #cfe4ca;
+  border-radius:18px;
+  background:linear-gradient(150deg,#fbfff8,#f0f8ec);
+}
+.calendar-header{
+  display:grid;
+  grid-template-columns:44px 1fr 44px;
+  align-items:center;
+  gap:8px;
+  margin-bottom:12px;
+}
+.calendar-month{
+  text-align:center;
+  color:#39734a;
+  font-size:19px;
+  font-weight:800;
+}
+.calendar-nav{
+  width:42px;
+  height:42px;
+  border:1px solid #cfe4ca;
+  border-radius:13px;
+  background:#fff;
+  color:#39734a;
+  font-size:29px;
+  line-height:1;
+  cursor:pointer;
+}
+.calendar-weekdays,.calendar-days{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:5px;
+  text-align:center;
+}
+.calendar-weekdays{
+  margin-bottom:7px;
+  color:#789477;
+  font-size:14px;
+  font-weight:800;
+}
+.calendar-weekdays span{padding:5px 0}
+.calendar-day{
+  min-width:0;
+  aspect-ratio:1;
+  border:1px solid transparent;
+  border-radius:13px;
+  background:transparent;
+  color:#385e40;
+  font:inherit;
+  font-size:16px;
+  font-weight:650;
+  cursor:pointer;
+}
+.calendar-day.today{
+  border-color:#85bd83;
+  background:#e7f5e2;
+}
+.calendar-day.selected{
+  border:2px solid #39824d;
+  background:linear-gradient(145deg,#438e58,#72b879);
+  color:#fff;
+  box-shadow:0 3px 8px #477d4b35;
+}
+.calendar-day.selected.today{
+  border-color:#286c3d;
+}
+.calendar-empty{aspect-ratio:1}
+.selected-date-label{
+  margin-top:12px;
+  padding:9px 11px;
+  border-radius:11px;
+  background:#e5f3df;
+  color:#39734a;
+  text-align:center;
+  font-size:15px;
+  font-weight:750;
+}
+@media(max-width:380px){
+  .calendar-panel{padding:10px}
+  .calendar-weekdays,.calendar-days{gap:3px}
+  .calendar-day{border-radius:10px;font-size:15px}
+}
