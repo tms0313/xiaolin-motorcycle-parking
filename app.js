@@ -53,6 +53,33 @@
     const icons = {"市場全聯":"🛒","全聯":"🛒","全聯旁邊":"🛒","舊小象旁邊":"🐘","舊小象":"🐘","舊小巷":"🐘","85度C/燒臘店對面":"☕","85度C":"☕","夾娃娃機/洗衣店旁":"🎯","夾娃娃機":"🎯","洗衣店(燒臘店旁)":"🎯","紀醫師前面":"🩺","紀醫師":"🩺"};
     return icons[row.location_name] || "🐾";
   };
+  const getDailyRecord = (date) => {
+    const rows = calendarRecords.filter(row => row.parked_at === date);
+    return rows.length ? rows[rows.length - 1] : null;
+  };
+  const syncEditorForSelectedDate = () => {
+    const row = getDailyRecord(selectedDate);
+    $("note").value = row?.note || "";
+    if (!row) {
+      setSelectedPlace("");
+      return;
+    }
+    if (row.location_type === "custom") {
+      selectedPlace = "__custom__";
+      gps = row.latitude != null && row.longitude != null
+        ? {lat:Number(row.latitude),lng:Number(row.longitude),accuracy:0}
+        : null;
+      document.querySelectorAll(".location-choice").forEach(btn => btn.classList.remove("selected"));
+      $("gpsStatus").textContent = gps ? "這天已記錄其他位置，可重新取得 GPS 或改選固定地點。" : "這天已有其他位置紀錄，請重新取得 GPS 才能儲存。";
+      $("gpsCoordinates").textContent = gps ? "緯度 "+gps.lat.toFixed(6)+"，經度 "+gps.lng.toFixed(6) : "";
+      $("gpsCoordinates").classList.toggle("hidden", !gps);
+      $("saveBtn").disabled = !gps;
+      $("saveBtn").querySelector("b").textContent = "更新當日紀錄";
+    } else {
+      setSelectedPlace(row.location_name || "");
+      $("saveBtn").querySelector("b").textContent = "更新當日紀錄";
+    }
+  };
   const renderCalendar = () => {
     const year = calendarMonth.getFullYear();
     const month = calendarMonth.getMonth();
@@ -67,24 +94,25 @@
       const classes = ["calendar-day"];
       if (date === selectedDate) classes.push("selected");
       if (date === today) classes.push("today");
-      const dayRecords = calendarRecords.filter(row => row.parked_at === date);
-      const icons = dayRecords.slice(0,3).map(row => '<span class="calendar-location-icon" title="'+escapeHtml(row.location_name || "停放紀錄")+'">'+getLocationIcon(row)+'</span>').join("");
-      const extra = dayRecords.length > 3 ? '<span class="calendar-more">+'+(dayRecords.length-3)+'</span>' : "";
+      const dayRecord = getDailyRecord(date);
+      const icons = dayRecord ? '<span class="calendar-location-icon" title="'+escapeHtml(dayRecord.location_name || "停放紀錄")+'">'+getLocationIcon(dayRecord)+'</span>' : "";
+      const extra = "";
       cells += '<button type="button" class="'+classes.join(" ")+'" data-date="'+date+'" aria-pressed="'+(date===selectedDate)+'"><span class="calendar-day-number">'+day+'</span><span class="calendar-day-markers">'+icons+extra+'</span></button>';
     }
     $("calendarDays").innerHTML = cells;
     $("recordDate").value = selectedDate;
-    const selectedRecords = calendarRecords.filter(row => row.parked_at === selectedDate);
+    const selectedRecord = getDailyRecord(selectedDate);
     $("selectedDateLabel").textContent = "已選擇：" + selectedDate;
     const info = $("calendarRecordInfo");
     if (info) {
-      info.innerHTML = selectedRecords.length
-        ? '<div class="calendar-info-title">當日停放位置</div>' + selectedRecords.map(row => {
+      info.innerHTML = selectedRecord
+        ? '<div class="calendar-info-title">當日停放位置</div>' + (() => {
+            const row = selectedRecord;
             const mapUrl = getMapUrl(row);
             return '<div class="calendar-record-row"><span class="calendar-info-icon">'+getLocationIcon(row)+'</span><span class="calendar-info-name">'+escapeHtml(row.location_name || "未標示地點")+'</span>' +
               (mapUrl ? '<a class="map-link" target="_blank" rel="noopener" href="'+mapUrl+'">地圖</a>' : '') +
               '<button type="button" class="edit-btn" data-edit="'+row.id+'">修改</button><button type="button" class="delete-btn" data-delete="'+row.id+'">刪除</button></div>';
-          }).join("")
+          })()
         : '<div class="calendar-no-record">這一天尚無停放紀錄</div>';
     }
   };
@@ -93,6 +121,7 @@
     const [year,month] = date.split("-").map(Number);
     calendarMonth = new Date(year,month-1,1);
     renderCalendar();
+    syncEditorForSelectedDate();
   };
   const setMessage = (id, message, ok=false) => {
     $(id).textContent = message || "";
@@ -188,6 +217,7 @@
     }
     calendarRecords = data || [];
     renderCalendar();
+    syncEditorForSelectedDate();
   };
   const loadRecords = async () => {
     loadLatestParking();
@@ -226,16 +256,43 @@
     $("saveBtn").querySelector("b").textContent = "喵～蓋章確認中…";
     await playPawStamp();
     $("saveBtn").querySelector("b").textContent = "儲存中…";
-    const {error} = await db.from("parking_records").insert(payload);
-    $("saveBtn").disabled = false;
-    $("saveBtn").querySelector("b").textContent = "確認停放地點";
-    if (error) {
-      setMessage("recordMessage","儲存失敗："+error.message);
+    const {data:existingRows,error:lookupError} = await db.from("parking_records").select("*")
+      .eq("parked_at",payload.parked_at)
+      .order("created_at",{ascending:false})
+      .limit(1);
+    if (lookupError) {
+      $("saveBtn").disabled = false;
+      $("saveBtn").querySelector("b").textContent = "確認停放地點";
+      setMessage("recordMessage","確認當日紀錄失敗："+lookupError.message);
       return;
     }
-    setMessage("recordMessage","已成功儲存停放紀錄。",true);
-    $("note").value = "";
-    setSelectedPlace("");
+    const existing = existingRows && existingRows[0];
+    let writeResult;
+    if (existing) {
+      if (!confirm(payload.parked_at+" 已有停放紀錄（"+(existing.location_name || "未標示地點")+"）。\n\n要用目前選擇的地點更新原紀錄嗎？")) {
+        $("saveBtn").disabled = false;
+        $("saveBtn").querySelector("b").textContent = "更新當日紀錄";
+        return;
+      }
+      const updatePayload = {
+        parked_at:payload.parked_at,
+        location_type:payload.location_type,
+        location_name:payload.location_name,
+        latitude:payload.latitude,
+        longitude:payload.longitude,
+        note:payload.note || existing.note || null
+      };
+      writeResult = await db.from("parking_records").update(updatePayload).eq("id",existing.id);
+    } else {
+      writeResult = await db.from("parking_records").insert(payload);
+    }
+    $("saveBtn").disabled = false;
+    $("saveBtn").querySelector("b").textContent = "確認停放地點";
+    if (writeResult.error) {
+      setMessage("recordMessage","儲存失敗："+writeResult.error.message);
+      return;
+    }
+    setMessage("recordMessage",existing ? "已更新當天的停放紀錄。" : "已成功儲存停放紀錄。",true);
     await loadRecords();
   };
   const editRecord = async (id) => {
@@ -243,7 +300,7 @@
     if (error) return alert("讀取紀錄失敗："+error.message);
     const date = prompt("停放日期（YYYY-MM-DD）",row.parked_at);
     if (date === null) return;
-    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) return alert("日期格式不正確。");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(Date.parse(date)) || new Date(date+"T00:00:00").toISOString().slice(0,10)!==date) return alert("日期格式不正確。");
     const placeCodes = {
       "市場全聯":"A","舊小象旁邊":"B","85度C/燒臘店對面":"C",
       "夾娃娃機/洗衣店旁":"D","紀醫師前面":"E",
