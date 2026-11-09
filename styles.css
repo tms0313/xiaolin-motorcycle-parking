@@ -283,3 +283,65 @@ footer{font-size:13px;color:#78977b}
   text-decoration:underline;
   text-underline-offset:3px;
 }
+
+
+/* 確認停放地點：貓掌印蓋章動畫 */
+.paw-stamp{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:grid;
+  place-content:center;
+  justify-items:center;
+  gap:8px;
+  background:#183c2c55;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.paw-stamp span{
+  display:block;
+  color:#39824d;
+  font-size:clamp(100px,30vw,160px);
+  line-height:1;
+  filter:drop-shadow(0 7px 0 #245d36);
+  transform:scale(2.4) rotate(-28deg);
+  opacity:0;
+}
+.paw-stamp strong{
+  padding:8px 18px;
+  border-radius:999px;
+  background:#fffef2;
+  color:#347647;
+  font-size:20px;
+  box-shadow:0 4px 12px #173b3528;
+  opacity:0;
+  transform:translateY(12px);
+}
+.paw-stamp.play{
+  visibility:visible;
+  opacity:1;
+  animation:stamp-backdrop .85s ease both;
+}
+.paw-stamp.play span{
+  animation:cat-paw-stamp .72s cubic-bezier(.2,.85,.25,1.35) both;
+}
+.paw-stamp.play strong{
+  animation:stamp-caption .3s ease .38s both;
+}
+@keyframes cat-paw-stamp{
+  0%{opacity:0;transform:translateY(-90px) scale(2.4) rotate(-28deg)}
+  48%{opacity:1;transform:translateY(12px) scale(.82) rotate(8deg)}
+  68%{opacity:1;transform:translateY(-5px) scale(1.12) rotate(-4deg)}
+  100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}
+}
+@keyframes stamp-caption{
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes stamp-backdrop{
+  0%,100%{opacity:0}
+  12%,78%{opacity:1}
+}
+@media(prefers-reduced-motion:reduce){
+  .paw-stamp.play,.paw-stamp.play span,.paw-stamp.play strong{animation-duration:.01ms}
+}
