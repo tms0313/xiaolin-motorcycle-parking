@@ -5,7 +5,29 @@
     !config.SUPABASE_URL.includes("請填入") &&
     !config.SUPABASE_ANON_KEY.includes("請填入");
   const $ = (id) => document.getElementById(id);
-  const fixedPlaces = ["全聯", "紀醫師", "舊小象", "85度C", "夾娃娃機"];
+  const fixedPlaces = ["市場全聯", "舊小象旁邊", "85度C/燒臘店對面", "夾娃娃機/洗衣店旁", "紀醫師前面"];
+  const ADDRESS_MAP = {
+    "市場全聯":"基隆市七堵區南興路106號",
+    "舊小象旁邊":"基隆市七堵區崇信街13-7號",
+    "85度C/燒臘店對面":"基隆市七堵區明德一路212號",
+    "夾娃娃機/洗衣店旁":"基隆市七堵區自治北街10號",
+    "紀醫師前面":"基隆市七堵區開元路85號",
+    "全聯旁邊":"基隆市七堵區南興路106號",
+    "舊小巷":"基隆市七堵區崇信街13-7號",
+    "85度C":"基隆市七堵區明德一路212號",
+    "洗衣店(燒臘店旁)":"基隆市七堵區自治北街10號",
+    "全聯":"基隆市七堵區南興路106號",
+    "舊小象":"基隆市七堵區崇信街13-7號",
+    "夾娃娃機":"基隆市七堵區自治北街10號",
+    "紀醫師":"基隆市七堵區開元路85號"
+  };
+  const getMapUrl = (row) => {
+    if (row.location_type === "custom" && row.latitude != null && row.longitude != null) {
+      return "https://www.google.com/maps?q=" + encodeURIComponent(row.latitude + "," + row.longitude);
+    }
+    const address = ADDRESS_MAP[row.location_name];
+    return address ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(address) : "";
+  };
   let db = null;
   let user = null;
   let selectedPlace = "";
@@ -124,8 +146,9 @@
       : "";
     $("latestParkingDate").textContent = dateText + (timeText ? " · " + timeText : "");
     $("latestParkingPlace").textContent = row.location_name || "未標示地點";
-    $("latestParkingMap").innerHTML = row.location_type === "custom" && row.latitude != null && row.longitude != null
-      ? '<a class="latest-map-link" target="_blank" rel="noopener" href="https://www.google.com/maps?q='+encodeURIComponent(row.latitude+","+row.longitude)+'">在地圖上開啟位置 ↗</a>'
+    const latestMapUrl = getMapUrl(row);
+    $("latestParkingMap").innerHTML = latestMapUrl
+      ? '<a class="latest-map-link" target="_blank" rel="noopener" href="'+latestMapUrl+'">在地圖上開啟位置 ↗</a>'
       : "";
   };
   const loadRecords = async () => {
@@ -147,8 +170,9 @@
     }
     $("recordList").innerHTML = data.map(row => {
       const custom = row.location_type === "custom";
-      const map = custom && row.latitude != null && row.longitude != null
-        ? '<a class="map-link" target="_blank" rel="noopener" href="https://www.google.com/maps?q='+encodeURIComponent(row.latitude+","+row.longitude)+'">在地圖查看 ↗</a>' : "";
+      const mapUrl = getMapUrl(row);
+      const map = mapUrl
+        ? '<a class="map-link" target="_blank" rel="noopener" href="'+mapUrl+'">在地圖查看 ↗</a>' : "";
       return '<article class="record-card">'+
         '<div class="record-head"><div><div class="place-name">'+(custom ? "📍 " : "🏠 ")+escapeHtml(row.location_name)+'</div>'+
         '<div class="record-meta">'+escapeHtml(row.parked_at)+' · '+new Date(row.created_at).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})+'</div></div>'+map+'</div>'+
@@ -196,15 +220,20 @@
     const date = prompt("停放日期（YYYY-MM-DD）",row.parked_at);
     if (date === null) return;
     if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) return alert("日期格式不正確。");
-    const placeCodes = {"全聯":"A","紀醫師":"B","舊小象":"C","85度C":"D","夾娃娃機":"E"};
+    const placeCodes = {
+      "市場全聯":"A","舊小象旁邊":"B","85度C/燒臘店對面":"C",
+      "夾娃娃機/洗衣店旁":"D","紀醫師前面":"E",
+      "全聯":"A","全聯旁邊":"A","舊小象":"B","舊小巷":"B",
+      "85度C":"C","夾娃娃機":"D","洗衣店(燒臘店旁)":"D","紀醫師":"E"
+    };
     const currentChoice = row.location_type === "custom" ? "G" : (placeCodes[row.location_name] || "A");
-    const choice = prompt("停放位置：輸入 A=全聯、B=紀醫師、C=舊小象、D=85度C、E=夾娃娃機，或 G（其他 GPS 位置）",currentChoice);
+    const choice = prompt("停放位置：輸入 A=市場全聯、B=舊小象旁邊、C=85度C/燒臘店對面、D=夾娃娃機/洗衣店旁、E=紀醫師前面，或 G（其他 GPS 位置）",currentChoice);
     if (choice === null) return;
     const normalized = choice.trim().toUpperCase();
     let location_type, location_name, latitude = null, longitude = null;
     if (["A","B","C","D","E"].includes(normalized)) {
       location_type = "fixed";
-      location_name = {"A":"全聯","B":"紀醫師","C":"舊小象","D":"85度C","E":"夾娃娃機"}[normalized];
+      location_name = {"A":"市場全聯","B":"舊小象旁邊","C":"85度C/燒臘店對面","D":"夾娃娃機/洗衣店旁","E":"紀醫師前面"}[normalized];
     } else if (normalized === "G") {
       location_type = "custom";
       location_name = "其他位置";
