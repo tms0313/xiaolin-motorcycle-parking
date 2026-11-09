@@ -12,7 +12,7 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand-mark" aria-label="貓咪">🐱</div>
+    <div class="brand-mark" aria-label="貓咪">🐈</div>
     <div><h1>小霖的摩拖車停放紀錄</h1><p>共同停放紀錄</p></div>
     <button id="logoutBtn" class="quiet hidden" type="button">登出</button>
   </header>
@@ -21,7 +21,7 @@
     <section id="configNotice" class="notice hidden"></section>
 
     <section id="authPanel" class="panel auth-panel">
-      <div class="login-cat" aria-hidden="true">🐱</div>
+      <div class="login-cat" aria-hidden="true">🐈</div>
       <h2>喵～歡迎回來！</h2>
       <p class="muted login-subtitle">🐾 小霖的摩拖車停放紀錄<br>多人共同使用，請用個人帳號登入</p>
       <form id="authForm">
@@ -62,11 +62,7 @@
       </section>
 
       <section class="panel history-panel">
-        <div class="section-heading"><div><h2>停放歷史紀錄</h2><p class="muted">所有登入者共用，可共同查詢及維護。</p></div></div>
-        <div class="filters">
-          <label>查詢日期<input id="filterDate" type="date"></label>
-          <label>地點<select id="filterPlace"><option value="">全部地點</option><option>全聯</option><option>紀醫師</option><option>舊小象</option><option>85度C</option><option>夾娃娃機</option><option value="custom">其他 GPS 位置</option></select></label>
-        </div>
+        <div class="section-heading"><div><h2>停放歷史紀錄</h2><p class="muted">以下列出最近 7 日的停放位置，所有登入者共用。</p></div></div>
         <div id="recordList" class="record-list"><div class="empty">登入後載入紀錄。</div></div>
       </section>
     </section>
