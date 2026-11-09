@@ -43,10 +43,10 @@
           <label>停放日期<input id="recordDate" type="date" required></label>
           <div class="field-label">固定地點</div>
           <div class="location-grid" id="fixedLocations">
-            <button type="button" class="location-choice" data-place="地點 A"><span>📍</span>地點 A</button>
-            <button type="button" class="location-choice" data-place="地點 B"><span>📍</span>地點 B</button>
-            <button type="button" class="location-choice" data-place="地點 C"><span>📍</span>地點 C</button>
-            <button type="button" class="location-choice" data-place="地點 D"><span>📍</span>地點 D</button>
+            <button type="button" class="location-choice" data-place="全聯"><span>📍</span>全聯</button>
+            <button type="button" class="location-choice" data-place="紀醫師"><span>📍</span>紀醫師</button>
+            <button type="button" class="location-choice" data-place="舊小象"><span>📍</span>舊小象</button>
+            <button type="button" class="location-choice" data-place="85度C"><span>📍</span>85度C</button>
           </div>
           <div class="custom-location">
             <button id="gpsBtn" type="button" class="gps-button">◎ 其他位置：取得目前 GPS</button>
@@ -63,7 +63,7 @@
         <div class="section-heading"><div><h2>停放歷史紀錄</h2><p class="muted">所有登入者共用，可共同查詢及維護。</p></div></div>
         <div class="filters">
           <label>查詢日期<input id="filterDate" type="date"></label>
-          <label>地點<select id="filterPlace"><option value="">全部地點</option><option>地點 A</option><option>地點 B</option><option>地點 C</option><option>地點 D</option><option value="custom">其他 GPS 位置</option></select></label>
+          <label>地點<select id="filterPlace"><option value="">全部地點</option><option>全聯</option><option>紀醫師</option><option>舊小象</option><option>85度C</option><option value="custom">其他 GPS 位置</option></select></label>
         </div>
         <div id="recordList" class="record-list"><div class="empty">登入後載入紀錄。</div></div>
       </section>
