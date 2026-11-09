@@ -2,6 +2,6 @@
 // anon key 可以放在前端；資料安全由資料表 RLS 政策負責。
 // 絕對不要放入 service_role key。
 window.APP_CONFIG = {
-  SUPABASE_URL: "請填入_SUPABASE_PROJECT_URL",
-  SUPABASE_ANON_KEY: "請填入_SUPABASE_ANON_KEY"
+  SUPABASE_URL: "https://gcbeqgybkzeblkvdochp.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_jBv0sGlIddv_oeLcpbbrnQ_7DWFSvzQ"
 };
